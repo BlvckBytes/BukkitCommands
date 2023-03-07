@@ -24,11 +24,12 @@
 
 package me.blvckbytes.bukkitcommands;
 
+import me.blvckbytes.bukkitcommands.error.IErrorHandlerConfigProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface ICommandConfigProvider {
+public interface ICommandConfigProvider extends IErrorHandlerConfigProvider {
 
   @NotNull String getName();
 

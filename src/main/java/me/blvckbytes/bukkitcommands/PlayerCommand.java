@@ -24,7 +24,8 @@
 
 package me.blvckbytes.bukkitcommands;
 
-import me.blvckbytes.bukkitcommands.error.NotAPlayerError;
+import me.blvckbytes.bukkitcommands.error.CommandError;
+import me.blvckbytes.bukkitcommands.error.EErrorType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -39,8 +40,13 @@ public abstract class PlayerCommand extends BukkitCommand {
   @Override
   protected void onInvocation(CommandSender sender, String alias, String[] args) {
     if (!(sender instanceof Player))
-      throw new NotAPlayerError();
+      throw new CommandError(null, EErrorType.NOT_A_PLAYER);
 
     onPlayerInvocation((Player) sender, alias, args);
+  }
+
+  protected void ensurePermission(Player player, String permission) {
+    if (!player.hasPermission(permission))
+      throw new CommandError(null, EErrorType.MISSING_PERMISSION, permission);
   }
 }

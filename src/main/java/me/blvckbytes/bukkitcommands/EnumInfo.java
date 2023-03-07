@@ -24,16 +24,45 @@
 
 package me.blvckbytes.bukkitcommands;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class EnumInfo {
+public class EnumInfo implements IEnumInfo {
 
-  public final Map<String, Object> enumConstantByLowerCaseName;
-  public final List<String> originalEnumConstantStrings;
+  private final Class<? extends Enum<?>> enumClass;
+  private final List<String> enumConstantNames;
+  private final List<Enum<?>> enumConstants;
 
-  public EnumInfo(Map<String, Object> enumConstantByLowerCaseName, List<String> originalEnumConstantStrings) {
-    this.enumConstantByLowerCaseName = enumConstantByLowerCaseName;
-    this.originalEnumConstantStrings = originalEnumConstantStrings;
+  public final Map<String, Enum<?>> enumConstantByLowerCaseName;
+
+  public EnumInfo(Class<? extends Enum<?>> enumClass) {
+    this.enumClass = enumClass;
+    this.enumConstants = Collections.unmodifiableList(Arrays.asList(enumClass.getEnumConstants()));
+
+    List<String> names = new ArrayList<>();
+    Map<String, Enum<?>> table = new HashMap<>();
+
+    for (Enum<?> constant : this.enumConstants) {
+      String name = constant.name();
+      names.add(name);
+      table.put(name.toLowerCase(), constant);
+    }
+
+    this.enumConstantNames = Collections.unmodifiableList(names);
+    this.enumConstantByLowerCaseName = Collections.unmodifiableMap(table);
+  }
+
+  @Override
+  public Class<? extends Enum<?>> getEnumClass() {
+    return enumClass;
+  }
+
+  @Override
+  public List<Enum<?>> getEnumConstants() {
+    return enumConstants;
+  }
+
+  @Override
+  public List<String> getEnumConstantNames() {
+    return enumConstantNames;
   }
 }

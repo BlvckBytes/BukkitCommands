@@ -24,19 +24,16 @@
 
 package me.blvckbytes.bukkitcommands.error;
 
-import me.blvckbytes.bukkitcommands.ICommandConfigProvider;
-import org.bukkit.command.CommandSender;
-
-public class MalformedUuidError extends ACommandError {
-
-  public MalformedUuidError(int argumentIndex) {
-    super(argumentIndex);
-  }
-
-  @Override
-  public void handle(ICommandConfigProvider configProvider, CommandSender sender, String alias, String[] args) {
-    assert argumentIndex != null;
-    String numberString = args[argumentIndex];
-    sender.sendMessage("§cThe string " + numberString + " is not a valid UUID");
-  }
+public enum EErrorType {
+  MALFORMED_DOUBLE,
+  MALFORMED_FLOAT,
+  MALFORMED_LONG,
+  MALFORMED_INTEGER,
+  MALFORMED_UUID,
+  MALFORMED_ENUM,
+  MISSING_PERMISSION,
+  MISSING_ARGUMENT,
+  NOT_A_PLAYER,
+  PLAYER_UNKNOWN,
+  PLAYER_NOT_ONLINE
 }

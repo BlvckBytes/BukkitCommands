@@ -24,19 +24,32 @@
 
 package me.blvckbytes.bukkitcommands.error;
 
-import me.blvckbytes.bukkitcommands.ICommandConfigProvider;
-import org.bukkit.command.CommandSender;
+import me.blvckbytes.bukkitcommands.IEnumInfo;
 
-public class MalformedDoubleError extends ACommandError {
+public interface IErrorHandlerConfigProvider {
 
-  public MalformedDoubleError(int argumentIndex) {
-    super(argumentIndex);
-  }
+  String getMalformedDoubleMessage(ErrorContext context);
 
-  @Override
-  public void handle(ICommandConfigProvider configProvider, CommandSender sender, String alias, String[] args) {
-    assert argumentIndex != null;
-    String numberString = args[argumentIndex];
-    sender.sendMessage("§cThe number " + numberString + " is not a double");
-  }
+  String getMalformedFloatMessage(ErrorContext context);
+
+  String getMalformedLongMessage(ErrorContext context);
+
+  String getMalformedIntegerMessage(ErrorContext context);
+
+  String getMalformedUuidMessage(ErrorContext context);
+
+  String getMalformedEnumMessage(ErrorContext context, IEnumInfo enumInfo);
+
+  String getMissingPermissionMessage(ErrorContext context, String permission);
+
+  String getMissingArgumentMessage(ErrorContext context);
+
+  String getNotAPlayerMessage(ErrorContext context);
+
+  String getPlayerUnknownMessage(ErrorContext context);
+
+  String getPlayerNotOnlineMessage(ErrorContext context);
+
+  String getInternalErrorMessage(ErrorContext context);
+
 }

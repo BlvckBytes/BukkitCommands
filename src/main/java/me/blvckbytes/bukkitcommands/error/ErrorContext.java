@@ -24,19 +24,20 @@
 
 package me.blvckbytes.bukkitcommands.error;
 
-import me.blvckbytes.bukkitcommands.ICommandConfigProvider;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.Nullable;
 
-public class PlayerUnknownError extends ACommandError {
+public class ErrorContext {
 
-  public PlayerUnknownError(int argumentIndex) {
-    super(argumentIndex);
-  }
+  public final CommandSender sender;
+  public final String alias;
+  public final String[] arguments;
+  public final @Nullable Integer argumentIndex;
 
-  @Override
-  public void handle(ICommandConfigProvider configProvider, CommandSender sender, String alias, String[] args) {
-    assert argumentIndex != null;
-    String playerName = args[argumentIndex];
-    sender.sendMessage("§cThe player " + playerName + " has not played beforee");
+  public ErrorContext(CommandSender sender, String alias, String[] arguments, @Nullable Integer argumentIndex) {
+    this.sender = sender;
+    this.alias = alias;
+    this.arguments = arguments;
+    this.argumentIndex = argumentIndex;
   }
 }

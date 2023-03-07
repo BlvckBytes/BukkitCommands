@@ -38,11 +38,11 @@ import java.util.function.Supplier;
 public abstract class BukkitCommand extends Command {
 
   protected static final List<String> EMPTY_STRING_LIST;
-  private static final Map<Class<? extends Enum<?>>, EnumInfo> enumerationConstantsCache;
+  private static final Map<Class<? extends Enum<?>>, EnumInfo> enumConstantsCache;
 
   static {
     EMPTY_STRING_LIST = Collections.unmodifiableList(new ArrayList<>());
-    enumerationConstantsCache = new HashMap<>();
+    enumConstantsCache = new HashMap<>();
   }
 
   private final ICommandConfigProvider configProvider;
@@ -90,11 +90,11 @@ public abstract class BukkitCommand extends Command {
 
   @SuppressWarnings("unchecked")
   protected <T extends Enum<?>> T enumParameter(String[] args, int argumentIndex, Class<T> enumClass) {
-    EnumInfo enumInfo = enumerationConstantsCache.computeIfAbsent(enumClass, this::createEnumInfo);
+    EnumInfo enumInfo = enumConstantsCache.computeIfAbsent(enumClass, EnumInfo::new);
     Object constant = enumInfo.enumConstantByLowerCaseName.get(resolveArgument(args, argumentIndex));
 
     if (constant == null)
-      throw new MalformedEnumError(argumentIndex, enumInfo.originalEnumConstantStrings);
+      throw new CommandError(argumentIndex, EErrorType.MALFORMED_ENUM, enumInfo);
 
     return (T) constant;
   }
@@ -107,7 +107,7 @@ public abstract class BukkitCommand extends Command {
     Player player = Bukkit.getPlayer(resolveArgument(args, argumentIndex));
 
     if (player == null)
-      throw new PlayerNotOnlineError(argumentIndex);
+      throw new CommandError(argumentIndex, EErrorType.PLAYER_NOT_ONLINE);
 
     return player;
   }
@@ -120,7 +120,7 @@ public abstract class BukkitCommand extends Command {
     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(resolveArgument(args, argumentIndex));
 
     if (hasToHavePlayed && !offlinePlayer.hasPlayedBefore())
-      throw new PlayerUnknownError(argumentIndex);
+      throw new CommandError(argumentIndex, EErrorType.PLAYER_UNKNOWN);
 
     return offlinePlayer;
   }
@@ -133,7 +133,7 @@ public abstract class BukkitCommand extends Command {
     try {
       return UUID.fromString(resolveArgument(args, argumentIndex));
     } catch (IllegalArgumentException exception) {
-      throw new MalformedUuidError(argumentIndex);
+      throw new CommandError(argumentIndex, EErrorType.MALFORMED_UUID);
     }
   }
 
@@ -145,7 +145,7 @@ public abstract class BukkitCommand extends Command {
     try {
       return Integer.parseInt(resolveArgument(args, argumentIndex));
     } catch (NumberFormatException exception) {
-      throw new MalformedIntegerError(argumentIndex);
+      throw new CommandError(argumentIndex, EErrorType.MALFORMED_INTEGER);
     }
   }
 
@@ -157,7 +157,7 @@ public abstract class BukkitCommand extends Command {
     try {
       return Long.parseLong(resolveArgument(args, argumentIndex));
     } catch (NumberFormatException exception) {
-      throw new MalformedLongError(argumentIndex);
+      throw new CommandError(argumentIndex, EErrorType.MALFORMED_LONG);
     }
   }
 
@@ -169,7 +169,7 @@ public abstract class BukkitCommand extends Command {
     try {
       return Double.parseDouble(resolveArgument(args, argumentIndex));
     } catch (NumberFormatException exception) {
-      throw new MalformedDoubleError(argumentIndex);
+      throw new CommandError(argumentIndex, EErrorType.MALFORMED_DOUBLE);
     }
   }
 
@@ -181,7 +181,7 @@ public abstract class BukkitCommand extends Command {
     try {
       return Float.parseFloat(resolveArgument(args, argumentIndex));
     } catch (NumberFormatException exception) {
-      throw new MalformedFloatError(argumentIndex);
+      throw new CommandError(argumentIndex, EErrorType.MALFORMED_FLOAT);
     }
   }
 
@@ -193,24 +193,13 @@ public abstract class BukkitCommand extends Command {
   //                                Internals                                //
   //=========================================================================//
 
-  private EnumInfo createEnumInfo(Class<? extends Enum<?>> enumerationClass) {
-    List<String> constants = new ArrayList<>();
-    Map<String, Object> lookupTable = new HashMap<>();
-
-    for (Enum<?> constant : enumerationClass.getEnumConstants()) {
-      String name = constant.name();
-      constants.add(constant.name());
-      lookupTable.put(name.toLowerCase(), constant);
-    }
-
-    return new EnumInfo(lookupTable, constants);
-  }
-
-  private <T> T invokeIfArgPresentOrElse(Supplier<T> callSite, T fallback) {
+  private <T> T invokeIfArgPresentOrElse(Supplier<T> executable, T fallback) {
     try {
-      return callSite.get();
-    } catch (MissingArgumentError error) {
-      return fallback;
+      return executable.get();
+    } catch (CommandError error) {
+      if (error.errorType != EErrorType.MISSING_ARGUMENT)
+        return fallback;
+      throw error;
     }
   }
 
@@ -219,7 +208,7 @@ public abstract class BukkitCommand extends Command {
       throw new IllegalArgumentException("Argument indices start at zero");
 
     if (argumentIndex >= args.length)
-      throw new MissingArgumentError(argumentIndex);
+      throw new CommandError(argumentIndex, EErrorType.MISSING_ARGUMENT);
 
     return args[argumentIndex];
   }
@@ -227,9 +216,58 @@ public abstract class BukkitCommand extends Command {
   private <T> T executeAndHandleCommandErrors(Supplier<T> executable, T returnValueOnError, CommandSender sender, String alias, String[] args) {
     try {
       return executable.get();
-    } catch (ACommandError commandError) {
-      commandError.handle(configProvider, sender, alias, args);
+    } catch (CommandError commandError) {
+      handleError(commandError, sender, alias, args);
+      return returnValueOnError;
+    } catch (Exception exception) {
+      ErrorContext context = new ErrorContext(sender, alias, args, null);
+      sender.sendMessage(configProvider.getInternalErrorMessage(context));
       return returnValueOnError;
     }
+  }
+
+  private void handleError(CommandError error, CommandSender sender, String alias, String[] args) {
+    ErrorContext context = new ErrorContext(sender, alias, args, error.argumentIndex);
+
+    String message;
+    switch (error.errorType) {
+      case MALFORMED_DOUBLE:
+        message = configProvider.getMalformedDoubleMessage(context);
+        break;
+      case MALFORMED_FLOAT:
+        message = configProvider.getMalformedFloatMessage(context);
+        break;
+      case MALFORMED_LONG:
+        message = configProvider.getMalformedLongMessage(context);
+        break;
+      case MALFORMED_INTEGER:
+        message = configProvider.getMalformedIntegerMessage(context);
+        break;
+      case MALFORMED_UUID:
+        message = configProvider.getMalformedUuidMessage(context);
+        break;
+      case MALFORMED_ENUM:
+        message = configProvider.getMalformedEnumMessage(context, (EnumInfo) error.parameter);
+        break;
+      case MISSING_PERMISSION:
+        message = configProvider.getMissingPermissionMessage(context, (String) error.parameter);
+        break;
+      case MISSING_ARGUMENT:
+        message = configProvider.getMissingArgumentMessage(context);
+        break;
+      case NOT_A_PLAYER:
+        message = configProvider.getNotAPlayerMessage(context);
+        break;
+      case PLAYER_UNKNOWN:
+        message = configProvider.getPlayerUnknownMessage(context);
+        break;
+      case PLAYER_NOT_ONLINE:
+        message = configProvider.getPlayerNotOnlineMessage(context);
+        break;
+      default:
+        throw new IllegalStateException("Encountered unimplemented error type: " + error.errorType);
+    }
+
+    sender.sendMessage(message);
   }
 }

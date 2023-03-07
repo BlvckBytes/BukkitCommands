@@ -22,20 +22,16 @@
  * SOFTWARE.
  */
 
-package me.blvckbytes.bukkitcommands.error;
+package me.blvckbytes.bukkitcommands;
 
-import me.blvckbytes.bukkitcommands.ICommandConfigProvider;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.Nullable;
+import java.util.List;
 
-public abstract class ACommandError extends RuntimeException {
+public interface IEnumInfo {
 
-  public final @Nullable Integer argumentIndex;
+  Class<? extends Enum<?>> getEnumClass();
 
-  public ACommandError(@Nullable Integer argumentIndex) {
-    this.argumentIndex = argumentIndex;
-  }
+  List<Enum<?>> getEnumConstants();
 
-  public abstract void handle(ICommandConfigProvider configProvider, CommandSender sender, String alias, String[] args);
+  List<String> getEnumConstantNames();
 
 }

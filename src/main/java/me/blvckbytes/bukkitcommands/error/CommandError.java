@@ -24,17 +24,21 @@
 
 package me.blvckbytes.bukkitcommands.error;
 
-import me.blvckbytes.bukkitcommands.ICommandConfigProvider;
-import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.Nullable;
 
-public class NotAPlayerError extends ACommandError {
+public class CommandError extends RuntimeException {
 
-  public NotAPlayerError() {
-    super(null);
+  public final @Nullable Integer argumentIndex;
+  public final EErrorType errorType;
+  public final Object parameter;
+
+  public CommandError(@Nullable Integer argumentIndex, EErrorType errorType) {
+    this(argumentIndex, errorType, null);
   }
 
-  @Override
-  public void handle(ICommandConfigProvider configProvider, CommandSender sender, String alias, String[] args) {
-    sender.sendMessage("§cThis command is only accessible for players");
+  public CommandError(@Nullable Integer argumentIndex, EErrorType errorType, Object parameter) {
+    this.argumentIndex = argumentIndex;
+    this.errorType = errorType;
+    this.parameter = parameter;
   }
 }
