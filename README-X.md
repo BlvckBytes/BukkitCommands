@@ -5,9 +5,7 @@
 A simple bukkit command library which offers boilerplate code as well as configuration sections
 for fully configurable commands and messages as well as error handling.
 
-## Table of Contents
-- [Command Section](#command-section)
-  - [Error Messages Section](#error-messages-section)
+<!-- #toc -->
 
 ## Command Section
 
