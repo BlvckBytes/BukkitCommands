@@ -45,7 +45,7 @@ public abstract class BukkitCommand extends Command {
     enumConstantsCache = new HashMap<>();
   }
 
-  private final ICommandConfigProvider configProvider;
+  protected final ICommandConfigProvider configProvider;
 
   protected BukkitCommand(ICommandConfigProvider configProvider) {
     super(

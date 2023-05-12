@@ -24,6 +24,7 @@
 
 package me.blvckbytes.bukkitcommands;
 
+import me.blvckbytes.bukkitcommands.config.IPermissionNode;
 import me.blvckbytes.bukkitcommands.error.CommandError;
 import me.blvckbytes.bukkitcommands.error.EErrorType;
 import org.bukkit.command.CommandSender;
@@ -43,6 +44,13 @@ public abstract class PlayerCommand extends BukkitCommand {
       throw new CommandError(null, EErrorType.NOT_A_PLAYER);
 
     onPlayerInvocation((Player) sender, alias, args);
+  }
+
+  protected void ensurePermission(Player player, IPermissionNode node) {
+    String nodeValue = configProvider.getPermissionNode(node);
+
+    if (!player.hasPermission(nodeValue))
+      throw new CommandError(null, EErrorType.MISSING_PERMISSION, nodeValue);
   }
 
   protected void ensurePermission(Player player, String permission) {

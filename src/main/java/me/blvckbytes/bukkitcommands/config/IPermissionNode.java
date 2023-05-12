@@ -22,24 +22,19 @@
  * SOFTWARE.
  */
 
-package me.blvckbytes.bukkitcommands;
+package me.blvckbytes.bukkitcommands.config;
 
-import me.blvckbytes.bukkitcommands.config.IPermissionNode;
-import me.blvckbytes.bukkitcommands.error.IErrorHandlerConfigProvider;
-import org.jetbrains.annotations.NotNull;
+public interface IPermissionNode {
 
-import java.util.List;
+  /**
+   * Get the internal name that's used to map this constant to a configurable node
+   */
+  String getInternalName();
 
-public interface ICommandConfigProvider extends IErrorHandlerConfigProvider {
-
-  @NotNull String getName();
-
-  @NotNull List<String> getAliases();
-
-  @NotNull String getDescription();
-
-  @NotNull String getUsage();
-
-  @NotNull String getPermissionNode(IPermissionNode node);
+  /**
+   * Get the fallback node to be used if the configuration couldn't retrieve the
+   * internal name's corresponding node
+   */
+  String getFallbackNode();
 
 }

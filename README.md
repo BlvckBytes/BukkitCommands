@@ -14,14 +14,15 @@ for fully configurable commands and messages as well as error handling.
 Neither command names, aliases nor messages should be hard coded in my personal opinion, which is why
 the command section offers keys for all of these values.
 
-| Property       | Description                                                                  | Interpretation       |
-|----------------|------------------------------------------------------------------------------|----------------------|
-| name           | The main name of the command                                                 | String               |
-| description    | The description printed in the vanilla help menu                             | String               |
-| usage          | The usage printed in the vanilla help menu                                   | String               |
-| aliases        | "Secondary names" of the command                                             | List<String>         |
-| argumentUsages | A map assigning a usage string to the number of currently provided arguments | Map<Integer, String> |
-| errorMessages  | Error messages used for various cases                                        | ErrorMessageSection  |
+| Property        | Description                                                                  | Interpretation       |
+|-----------------|------------------------------------------------------------------------------|----------------------|
+| name            | The main name of the command                                                 | String               |
+| description     | The description printed in the vanilla help menu                             | String               |
+| usage           | The usage printed in the vanilla help menu                                   | String               |
+| aliases         | "Secondary names" of the command                                             | List<String>         |
+| argumentUsages  | A map assigning a usage string to the number of currently provided arguments | Map<Integer, String> |
+| permissionNodes | Map of internal permission node names to used permission node values         | Map<String, String>  |
+| errorMessages   | Error messages used for various cases                                        | ErrorMessageSection  |
 
 ### Error Messages Section
 
