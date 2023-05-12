@@ -24,7 +24,6 @@
 
 package me.blvckbytes.bukkitcommands;
 
-import me.blvckbytes.bukkitcommands.config.IPermissionNode;
 import me.blvckbytes.bukkitcommands.error.IErrorHandlerConfigProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +38,5 @@ public interface ICommandConfigProvider extends IErrorHandlerConfigProvider {
   @NotNull String getDescription();
 
   @NotNull String getUsage();
-
-  @NotNull String getPermissionNode(IPermissionNode node);
 
 }

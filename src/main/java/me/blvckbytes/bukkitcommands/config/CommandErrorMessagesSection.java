@@ -42,7 +42,6 @@ public class CommandErrorMessagesSection implements IConfigSection {
     notAPlayer,
     playerUnknown,
     playerNotOnline,
-    missingPermission,
     internalError;
 
   @Override
@@ -86,10 +85,6 @@ public class CommandErrorMessagesSection implements IConfigSection {
 
   public BukkitEvaluable getPlayerNotOnline() {
     return playerNotOnline;
-  }
-
-  public BukkitEvaluable getMissingPermission() {
-    return missingPermission;
   }
 
   public BukkitEvaluable getInternalError() {

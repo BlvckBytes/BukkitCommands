@@ -34,6 +34,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class BukkitCommand extends Command {
 
@@ -46,8 +48,9 @@ public abstract class BukkitCommand extends Command {
   }
 
   protected final ICommandConfigProvider configProvider;
+  private final Logger logger;
 
-  protected BukkitCommand(ICommandConfigProvider configProvider) {
+  protected BukkitCommand(ICommandConfigProvider configProvider, Logger logger) {
     super(
       configProvider.getName(),
       configProvider.getDescription(),
@@ -56,6 +59,7 @@ public abstract class BukkitCommand extends Command {
     );
 
     this.configProvider = configProvider;
+    this.logger = logger;
   }
 
   //=========================================================================//
@@ -220,6 +224,7 @@ public abstract class BukkitCommand extends Command {
       handleError(commandError, sender, alias, args);
       return returnValueOnError;
     } catch (Exception exception) {
+      this.logger.log(Level.SEVERE, exception, () -> "An error occurred while executing a command");
       ErrorContext context = new ErrorContext(sender, alias, args, null);
       sender.sendMessage(configProvider.getInternalErrorMessage(context));
       return returnValueOnError;
@@ -248,9 +253,6 @@ public abstract class BukkitCommand extends Command {
         break;
       case MALFORMED_ENUM:
         message = configProvider.getMalformedEnumMessage(context, (EnumInfo) error.parameter);
-        break;
-      case MISSING_PERMISSION:
-        message = configProvider.getMissingPermissionMessage(context, (String) error.parameter);
         break;
       case MISSING_ARGUMENT:
         message = configProvider.getMissingArgumentMessage(context);

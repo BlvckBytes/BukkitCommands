@@ -55,9 +55,6 @@ public abstract class ACommandSection implements IConfigSection, ICommandConfigP
   private Map<String, BukkitEvaluable> argumentUsages;
 
   @CSAlways
-  private Map<String, String> permissionNodes;
-
-  @CSAlways
   private CommandErrorMessagesSection errorMessages;
 
   public ACommandSection(String defaultCommandName) {
@@ -131,16 +128,6 @@ public abstract class ACommandSection implements IConfigSection, ICommandConfigP
   }
 
   @Override
-  public String getMissingPermissionMessage(ErrorContext errorContext, String permission) {
-    return errorMessages.getMissingPermission().asScalar(
-      ScalarType.STRING,
-      new EvaluationEnvironmentBuilder()
-        .withStaticVariable("permission", permission)
-        .build(getErrorContextEnvironment(errorContext))
-    );
-  }
-
-  @Override
   public String getMissingArgumentMessage(ErrorContext errorContext) {
     if (errorContext.argumentIndex == null)
       throw new IllegalStateException("Argument index cannot be null if a usage string is requested");
@@ -172,16 +159,6 @@ public abstract class ACommandSection implements IConfigSection, ICommandConfigP
   @Override
   public String getInternalErrorMessage(ErrorContext errorContext) {
     return errorMessages.getInternalError().asScalar(ScalarType.STRING, getErrorContextEnvironment(errorContext));
-  }
-
-  @Override
-  public @NotNull String getPermissionNode(IPermissionNode node) {
-    String nodeValue = permissionNodes.get(node.getInternalName());
-
-    if (nodeValue == null)
-      return node.getFallbackNode();
-
-    return nodeValue;
   }
 
   private IEvaluationEnvironment getErrorContextEnvironment(ErrorContext context) {

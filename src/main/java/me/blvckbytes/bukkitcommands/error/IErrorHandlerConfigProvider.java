@@ -40,8 +40,6 @@ public interface IErrorHandlerConfigProvider {
 
   String getMalformedEnumMessage(ErrorContext context, IEnumInfo enumInfo);
 
-  String getMissingPermissionMessage(ErrorContext context, String permission);
-
   String getMissingArgumentMessage(ErrorContext context);
 
   String getNotAPlayerMessage(ErrorContext context);

@@ -21,7 +21,6 @@ the command section offers keys for all of these values.
 | usage           | The usage printed in the vanilla help menu                                   | String               |
 | aliases         | "Secondary names" of the command                                             | List<String>         |
 | argumentUsages  | A map assigning a usage string to the number of currently provided arguments | Map<Integer, String> |
-| permissionNodes | Map of internal permission node names to used permission node values         | Map<String, String>  |
 | errorMessages   | Error messages used for various cases                                        | ErrorMessageSection  |
 
 ### Error Messages Section
@@ -38,5 +37,4 @@ the command section offers keys for all of these values.
 | notAPlayer        | This command is only available for players, unusable in the console  | String         |
 | playerUnknown     | An argument which had to be a known player had an invalid value      | String         |
 | playerNotOnline   | An argument which had to be an online player had an invalid value    | String         |
-| missingPermission | The executing player misses a permission node                        | String         |
 | internalError     | Any other, internal error occurred                                   | String         |
