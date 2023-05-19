@@ -48,7 +48,7 @@ public abstract class BukkitCommand extends Command {
   }
 
   protected final ICommandConfigProvider configProvider;
-  private final Logger logger;
+  protected final Logger logger;
 
   protected BukkitCommand(ICommandConfigProvider configProvider, Logger logger) {
     super(
