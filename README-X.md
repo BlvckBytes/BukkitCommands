@@ -19,11 +19,11 @@ my_command:
   aliases:
     - mycmd
     - myc
-  # A map, assigning a usage to the count of currently provided arguments
+  # A map, assigning a usage to the parameter (index starting at 1) that's causing trouble
   # This can be used to print usage messages with - for example - highlighted arguments
   argumentUsages:
-    0$: '"&7/" & alias & " &c<player> &7<message>"'
-    1$: '"&7/" & alias & " &7<player> &c<message>"'
+    1$: '"&7/" & alias & " &c<player> &7<message>"'
+    2$: '"&7/" & alias & " &7<player> &c<message>"'
   # Error messages used for various cases
   # All of the following properties have at least this environment:
   # value: String? - Current argument value, or null if there's no argument present
