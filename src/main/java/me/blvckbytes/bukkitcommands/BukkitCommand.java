@@ -95,7 +95,7 @@ public abstract class BukkitCommand extends Command {
   @SuppressWarnings("unchecked")
   protected <T extends Enum<?>> T enumParameter(String[] args, int argumentIndex, Class<T> enumClass) {
     EnumInfo enumInfo = enumConstantsCache.computeIfAbsent(enumClass, EnumInfo::new);
-    Object constant = enumInfo.enumConstantByLowerCaseName.get(resolveArgument(args, argumentIndex));
+    Object constant = enumInfo.enumConstantByLowerCaseName.get(resolveArgument(args, argumentIndex).toLowerCase());
 
     if (constant == null)
       throw new CommandError(argumentIndex, EErrorType.MALFORMED_ENUM, enumInfo);
@@ -201,7 +201,7 @@ public abstract class BukkitCommand extends Command {
     try {
       return executable.get();
     } catch (CommandError error) {
-      if (error.errorType != EErrorType.MISSING_ARGUMENT)
+      if (error.errorType == EErrorType.MISSING_ARGUMENT)
         return fallback;
       throw error;
     }
